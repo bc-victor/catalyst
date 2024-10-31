@@ -100,7 +100,7 @@ export default function RootLayout({ params, children }: Props) {
         <script
           type="module"
           data-storehash="glzvoziq5k"
-          data-channelid="1489146"
+          data-channelid="1664810"
           src="http://localhost:3001/src/buyerPortal.ts"
         ></script>
       </body>
