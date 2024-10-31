@@ -97,6 +97,12 @@ export default function RootLayout({ params, children }: Props) {
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <VercelComponents />
+        <script
+          type="module"
+          data-storehash="glzvoziq5k"
+          data-channelid="1489146"
+          src="http://localhost:3001/src/buyerPortal.ts"
+        ></script>
       </body>
     </html>
   );
