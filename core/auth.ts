@@ -7,6 +7,26 @@ import { z } from 'zod';
 import { client } from './client';
 import { graphql } from './client/graphql';
 
+type B2bButtonType = {
+  classSelector: string;
+  color: string;
+  customCss: string;
+  enabled: boolean;
+  locationSelector: string;
+  text: string;
+};
+
+export enum CallbackKey {
+  onQuoteCreate = 'on-quote-create',
+  onAddToShoppingList = 'on-add-to-shopping-list',
+  onClickCartButton = 'on-click-cart-button'
+}
+
+type CallbackEvent = {
+  data: any
+  preventDefault: () => void
+}
+
 const LoginMutation = graphql(`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -193,4 +213,31 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
   }
+}
+
+declare global {
+    interface Window {
+        b2b: {
+          initializationEnvironment: { isInit: boolean };
+          callbacks: {
+            addEventListener: (key: CallbackKey, callback:  (event: CallbackEvent) => void) => void
+          }
+          utils: {
+            user: {
+              getProfile: () => { role: number };
+            };
+            openPage: (pageId: string) => void;
+            quote: {
+              getButtonInfo: () => B2bButtonType;
+              addProductFromPage: (item: any) => Promise<void>;
+              addProductsFromCart: () => Promise<void>;
+              getButtonInfoAddAllFromCartToQuote: () => B2bButtonType;
+            };
+            shoppingList: {
+              getButtonInfo: () => B2bButtonType;
+              addProductFromPage: (item: any) => Promise<void>;
+            };
+          };
+        };
+    }
 }

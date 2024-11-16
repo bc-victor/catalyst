@@ -23,6 +23,7 @@ import { NumberField } from './fields/number-field';
 import { QuantityField } from './fields/quantity-field';
 import { TextField } from './fields/text-field';
 import { ProductFormData, useProductForm } from './use-product-form';
+import { ReactElement, useEffect, useState } from 'react';
 
 interface Props {
   data: FragmentOf<typeof ProductItemFragment>;
@@ -46,6 +47,61 @@ const productItemTransform = (p: FragmentOf<typeof ProductItemFragment>) => {
     variant_id: p.variants.edges?.map((variant) => variant.node.entityId),
   };
 };
+
+const AddToShoppingList = ({ data: product }: Props) => {
+  return (
+    <Button disabled type="submit" variant="secondary">
+      <Heart aria-hidden="true" className="mr-2" />
+      Add to shopping list
+    </Button>
+  )
+};
+
+const AddToQuote = ({ data: product }: Props) => {
+  return (
+    <Button disabled type="submit" variant="secondary">
+      <Heart aria-hidden="true" className="mr-2" />
+      Add to quote
+    </Button>
+  )
+}
+
+const B2BButtons = ({ data: product }: Props) => {
+  const [buttonsToAddProduct, setButtonsToAddProduct] = useState<ReactElement[]>([]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!window.b2b?.initializationEnvironment.isInit) {
+        return;
+      }
+      clearInterval(intervalId);
+      const buttons: ReactElement[] = [];
+      if (window.b2b.utils.quote.getButtonInfo().enabled) {
+        buttons.push(
+          <AddToQuote
+            key="add-to-draft-quote"
+            data={product}
+          />
+        );
+      }
+      if (window.b2b.utils.shoppingList.getButtonInfo().enabled) {
+        buttons.push(
+          <AddToShoppingList
+            key="add-to-shopping-list"
+            data={product}
+          />
+        );
+      }
+      setButtonsToAddProduct(buttons);
+    }, 50);
+  }, []);
+
+  return (
+    <>
+      {buttonsToAddProduct}
+    </>
+  )
+}
 
 export const Submit = ({ data: product }: Props) => {
   const { formState } = useFormContext();
@@ -165,6 +221,9 @@ export const ProductForm = ({ data: product }: Props) => {
               <span>{t('saveToWishlist')}</span>
             </Button>
           </div>
+        </div>
+        <div className="mt-4 flex flex-col gap-4 @md:flex-row">
+          <B2BButtons data={product} />
         </div>
       </form>
     </FormProvider>
