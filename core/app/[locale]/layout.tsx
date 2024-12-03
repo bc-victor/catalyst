@@ -14,6 +14,7 @@ import { revalidate } from '~/client/revalidate-target';
 
 import { Notifications } from '../notifications';
 import { Providers } from '../providers';
+import Head from 'next/head';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -91,6 +92,20 @@ export default function RootLayout({ params, children }: Props) {
 
   return (
     <html className={`${inter.variable} font-sans`} lang={locale}>
+      <Head>
+        <script type="module">
+        {
+          `
+          import RefreshRuntime from 'http://localhost:3001/@react-refresh'
+          RefreshRuntime.injectIntoGlobalHook(window)
+          window.$RefreshReg$ = () => {}
+          window.$RefreshSig$ = () => (type) => type
+          window.__vite_plugin_react_preamble_installed__ = true
+          `
+        }
+        </script>
+      <script type="module" src="http://localhost:3001/@vite/client"></script>
+      </Head>
       <body className="flex h-screen min-w-[375px] flex-col">
         <Notifications />
         <NextIntlClientProvider locale={locale} messages={messages}>
@@ -101,7 +116,7 @@ export default function RootLayout({ params, children }: Props) {
           type="module"
           data-storehash="glzvoziq5k"
           data-channelid="1664810"
-          src="http://localhost:3001/src/buyerPortal.ts"
+          src="http://localhost:3001/src/headless.ts"
         ></script>
       </body>
     </html>

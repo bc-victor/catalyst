@@ -68,6 +68,7 @@ const AddToQuote = ({ data: product }: Props) => {
 
 const B2BButtons = ({ data: product }: Props) => {
   const [buttonsToAddProduct, setButtonsToAddProduct] = useState<ReactElement[]>([]);
+  console.log(product)
 
   useEffect(() => {
     const intervalId = setInterval(() => {
