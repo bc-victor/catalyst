@@ -118,7 +118,20 @@ export default function RootLayout({ params, children }: Props) {
           data-channelid="1664810"
           src="http://localhost:3001/src/headless.ts"
         ></script>
-      </body>
+        <script>
+          {
+            `
+    window.B3 = {
+      setting: {
+        store_hash: 'glzvoziq5k',
+        channel_id: 1664810,
+        platform: 'headless',
+      },
+    }
+            `
+          }
+  </script>
+        </body>
     </html>
   );
 }
