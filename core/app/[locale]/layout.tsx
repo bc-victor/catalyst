@@ -131,8 +131,9 @@ export default function RootLayout({ params, children }: Props) {
 
       const eventQueue = [{
         event: 'on-login',
-        callback: () => {
+        callback: (data) => {
           console.log('on-login callback');
+          console.log('payload', data);
         },
       }]
       window.b2b = {
