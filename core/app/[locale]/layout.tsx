@@ -116,7 +116,7 @@ export default function RootLayout({ params, children }: Props) {
           type="module"
           data-storehash="glzvoziq5k"
           data-channelid="1664810"
-          src="http://localhost:3001/src/headless.ts"
+          src="http://localhost:3001/src/buyerPortal.ts"
         ></script>
         <script>
           {
