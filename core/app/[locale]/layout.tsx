@@ -128,6 +128,17 @@ export default function RootLayout({ params, children }: Props) {
         platform: 'headless',
       },
     }
+
+      const callbackTypes = [{
+        event: 'on-login',
+        callback: () => {
+          console.log('on-login callback');
+        },
+      }]
+      window.b2b = {
+        callbackTypes,
+      }
+
             `
           }
   </script>
