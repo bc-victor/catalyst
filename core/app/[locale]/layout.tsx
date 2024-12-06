@@ -129,14 +129,14 @@ export default function RootLayout({ params, children }: Props) {
       },
     }
 
-      const callbackTypes = [{
+      const eventQueue = [{
         event: 'on-login',
         callback: () => {
           console.log('on-login callback');
         },
       }]
       window.b2b = {
-        callbackTypes,
+        eventQueue,
       }
 
             `
