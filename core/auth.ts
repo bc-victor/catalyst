@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import NextAuth, { type DefaultSession, type NextAuthConfig } from 'next-auth';
+import axios from 'axios'
 import 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { z } from 'zod';
@@ -19,13 +20,13 @@ type B2bButtonType = {
 export enum CallbackKey {
   onQuoteCreate = 'on-quote-create',
   onAddToShoppingList = 'on-add-to-shopping-list',
-  onClickCartButton = 'on-click-cart-button'
+  onClickCartButton = 'on-click-cart-button',
 }
 
 type CallbackEvent = {
-  data: any
-  preventDefault: () => void
-}
+  data: any;
+  preventDefault: () => void;
+};
 
 const LoginMutation = graphql(`
   mutation Login($email: String!, $password: String!) {
@@ -100,6 +101,12 @@ const config = {
     async signIn({ user }) {
       const cookieStore = await cookies();
       const cookieCartId = cookieStore.get('cartId')?.value;
+      const token = cookieStore.get('authjs.csrf-token')
+      const response = await axios.post("https://b2b-tunnel.bundleb2b.net:9005/api/io/auth/customers/storefront", {
+        channelId: process.env.BIGCOMMERCE_CHANNEL_ID, customerId: user.id, customerAccessToken: token
+    })
+    console.log('response', response.data)
+      
 
       if (cookieCartId && user.id) {
         try {
@@ -216,28 +223,29 @@ declare module 'next-auth/jwt' {
 }
 
 declare global {
-    interface Window {
-        b2b: {
-          initializationEnvironment: { isInit: boolean };
-          callbacks: {
-            addEventListener: (key: CallbackKey, callback:  (event: CallbackEvent) => void) => void
-          }
-          utils: {
-            user: {
-              getProfile: () => { role: number };
-            };
-            openPage: (pageId: string) => void;
-            quote: {
-              getButtonInfo: () => B2bButtonType;
-              addProductFromPage: (item: any) => Promise<void>;
-              addProductsFromCart: () => Promise<void>;
-              getButtonInfoAddAllFromCartToQuote: () => B2bButtonType;
-            };
-            shoppingList: {
-              getButtonInfo: () => B2bButtonType;
-              addProductFromPage: (item: any) => Promise<void>;
-            };
-          };
+  interface Window {
+    b2b: {
+      eventQueue: { event: string; callback: (data: any) => void }[];
+      initializationEnvironment: { isInit: boolean };
+      callbacks: {
+        addEventListener: (key: CallbackKey, callback: (event: CallbackEvent) => void) => void;
+      };
+      utils: {
+        user: {
+          getProfile: () => { role: number };
         };
-    }
+        openPage: (pageId: string) => void;
+        quote: {
+          getButtonInfo: () => B2bButtonType;
+          addProductFromPage: (item: any) => Promise<void>;
+          addProductsFromCart: () => Promise<void>;
+          getButtonInfoAddAllFromCartToQuote: () => B2bButtonType;
+        };
+        shoppingList: {
+          getButtonInfo: () => B2bButtonType;
+          addProductFromPage: (item: any) => Promise<void>;
+        };
+      };
+    };
+  }
 }
